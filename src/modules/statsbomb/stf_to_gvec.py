@@ -576,18 +576,17 @@ def poss_stats_and_misc(game):
     return vecs, cols 
 
 
-
-
-
-
 def time_with_man_adv(temp):
     
     temp['man_adv'] = temp['team_strength'].copy() - temp['opp_strength'].copy()
-    temp['timestamp'] = pd.to_datetime(temp['timestamp']).dt.minute + (pd.to_datetime(temp['timestamp']).dt.second)/60
-    temp['difftime'] = temp['timestamp'].diff().fillna(0)
+    temp['timestamp'] = pd.to_datetime(temp['timestamp'])
+    temp['time_elapsed'] = (temp['timestamp'].copy().diff().dt.seconds+(temp['timestamp'].copy().diff().dt.microseconds)/1e6)/60
+    temp['time_elapsed'] = np.where(temp['time_elapsed']>1, 0, temp['time_elapsed'])
+    temp['time_elapsed'] = np.where(temp['time_elapsed']<0, 0, temp['time_elapsed'])
+    assert(temp['time_elapsed'].sum()>30)
 
     if temp['man_adv'].abs().sum() > 0:
-        temp['twma'] = temp['man_adv'].copy() * temp['difftime'].copy()
+        temp['twma'] = temp['man_adv'].copy() * temp['time_elapsed'].copy()
         vec = [temp['twma'].fillna(0).sum()]
     else:
         vec = [0]

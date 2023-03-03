@@ -16,7 +16,6 @@ if __name__ == '__main__':
     data_download()
     from src.data_process import data_process
     data_process()
-    # data_process()
+    # from src.standardize import standardize
     # standardize()
-    # game_grades()
     # data_model_prep()
